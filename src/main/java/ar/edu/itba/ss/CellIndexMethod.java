@@ -1,11 +1,13 @@
+package ar.edu.itba.ss;
+
 import java.util.*;
 
 class CellIndexMethod {
-    private int N, M;
-    private double L, Rc;
-    private List<Particle> particles;
-    private Map<Integer, Set<Particle>> grid;
-    private boolean periodic;
+    private final int N, M;
+    private final double L, Rc;
+    private final List<Particle> particles;
+    private final Map<Integer, Set<Particle>> grid;
+    private final boolean periodic;
 
     public CellIndexMethod(int N, double L, int M, double Rc, boolean periodic) {
         this.N = N;
@@ -85,4 +87,3 @@ class CellIndexMethod {
         return possibleNeighbors;
     }
 }
-

@@ -1,8 +1,10 @@
-import java.util.List;
+package ar.edu.itba.ss;
+
 import java.util.Map;
 import java.util.Set;
 
 public class Main {
+
     public static void main(String[] args) {
         int N = 100;
         double L = 20;
@@ -20,4 +22,5 @@ public class Main {
             System.out.println("Partícula " + entry.getKey() + " vecinas: " + entry.getValue());
         }
     }
+
 }
