@@ -2,7 +2,8 @@ package ar.edu.itba.ss;
 
 class Particle implements Comparable<Particle> {
     private final int id;
-    private final double x, y, vx, vy, r;
+    private final double x, y, r;
+    private final double vx, vy;
 
     public Particle(int id, double x, double y, double vx, double vy, double r) {
         this.id = id;
