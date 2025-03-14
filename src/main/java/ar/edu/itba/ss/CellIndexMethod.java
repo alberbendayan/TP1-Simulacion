@@ -9,17 +9,20 @@ class CellIndexMethod {
     private final Map<Integer, Set<Particle>> grid;
     private final boolean periodic;
 
-    public CellIndexMethod(int N, double L, int M, double Rc, boolean periodic) {
+    public CellIndexMethod(int N, double L, int M, double Rc, boolean periodic, List<Particle> particles) {
         this.N = N;
         this.L = L;
         this.M = M;
         this.Rc = Rc;
         this.periodic = periodic;
-        this.particles = new ArrayList<>();
+        this.particles = particles;
         this.grid = new HashMap<>();
 
         initializeGrid();
-        generateParticles();
+        for(Particle p : particles) {
+            addToGrid(p);
+        }
+//        generateParticles();
     }
 
     public List<Particle> getParticles() {
@@ -39,19 +42,6 @@ class CellIndexMethod {
         }
         return neighbors;
     }
-    public Map<Integer, Set<Integer>> findNeighborsBruteForce() {
-        Map<Integer, Set<Integer>> neighbors = new HashMap<>();
-        for (Particle p : particles) {
-            neighbors.put(p.getId(), new TreeSet<>());
-            for (Particle neighbor : particles) {
-                if (p.getId() != neighbor.getId() && p.distanceTo(neighbor) < Rc) {
-                    neighbors.get(p.getId()).add(neighbor.getId());
-                }
-            }
-        }
-        return neighbors;
-    }
-
     private Set<Particle> getPossibleNeighbors(int cellIndex) {
         Set<Particle> possibleNeighbors = new TreeSet<>(grid.get(cellIndex));
         int row = cellIndex / M;
@@ -80,19 +70,6 @@ class CellIndexMethod {
         }
     }
 
-    private void generateParticles() {
-        Random rand = new Random();
-        for (int i = 0; i < N; i++) {
-            double x = rand.nextDouble() * L;
-            double y = rand.nextDouble() * L;
-            double vx = rand.nextDouble() - 0.5;
-            double vy = rand.nextDouble() - 0.5;
-            Particle p = new Particle(i, x, y, vx, vy, 5);
-            particles.add(p);
-            addToGrid(p);
-        }
-    }
-
     private int getCellIndex(double x, double y) {
         int row = (int) (y / (L / M));
         int col = (int) (x / (L / M));
@@ -103,5 +80,32 @@ class CellIndexMethod {
         int index = getCellIndex(p.getX(), p.getY());
         grid.get(index).add(p);
     }
+
+    public Map<Integer, Set<Integer>> findNeighborsBruteForce() {
+        Map<Integer, Set<Integer>> neighbors = new HashMap<>();
+        for (Particle p : particles) {
+            neighbors.put(p.getId(), new TreeSet<>());
+            for (Particle neighbor : particles) {
+                if (p.getId() != neighbor.getId() && p.distanceTo(neighbor) < Rc) {
+                    neighbors.get(p.getId()).add(neighbor.getId());
+                }
+            }
+        }
+        return neighbors;
+    }
+
+    private void generateParticles() {
+        Random rand = new Random();
+        for (int i = 0; i < N; i++) {
+            double x = rand.nextDouble() * L;
+            double y = rand.nextDouble() * L;
+            double vx = rand.nextDouble() - 0.5;
+            double vy = rand.nextDouble() - 0.5;
+            Particle p = new Particle(i, x, y, vx, vy, 5,1.0);
+            particles.add(p);
+            addToGrid(p);
+        }
+    }
+
 
 }

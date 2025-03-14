@@ -4,20 +4,31 @@ class Particle implements Comparable<Particle> {
     private final int id;
     private final double x, y, r;
     private final double vx, vy;
+    private double p;
 
-    public Particle(int id, double x, double y, double vx, double vy, double r) {
+    public Particle(int id, double x, double y, double vx, double vy, double r, double p) {
         this.id = id;
         this.x = x;
         this.y = y;
         this.vx = vx;
         this.vy = vy;
         this.r = r;
+        this.p = p;
     }
 
     public int getId() { return id; }
     public double getX() { return x; }
     public double getY() { return y; }
     public double getR() { return r; }
+    public double getVx() { return vx; }
+    public double getVy() { return vy; }
+    public double getP() {
+        return p;
+    }
+
+    public void setP(double p) {
+        this.p = p;
+    }
 
     public double distanceTo(Particle other) {
         double dx = this.x - other.x;
