@@ -64,6 +64,18 @@ class CellIndexMethod {
         }
         return neighbors;
     }
+    public Map<Integer, Set<Integer>> findNeighborsBruteForce() {
+        Map<Integer, Set<Integer>> neighbors = new HashMap<>();
+        for (Particle p : particles) {
+            neighbors.put(p.getId(), new TreeSet<>());
+            for (Particle neighbor : particles) {
+                if (p.getId() != neighbor.getId() && p.distanceTo(neighbor) < Rc) {
+                    neighbors.get(p.getId()).add(neighbor.getId());
+                }
+            }
+        }
+        return neighbors;
+    }
 
     private Set<Particle> getPossibleNeighbors(int cellIndex) {
         Set<Particle> possibleNeighbors = new TreeSet<>(grid.get(cellIndex));
