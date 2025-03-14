@@ -17,38 +17,13 @@ class CellIndexMethod {
         this.periodic = periodic;
         this.particles = new ArrayList<>();
         this.grid = new HashMap<>();
+
         initializeGrid();
         generateParticles();
     }
 
-    private void initializeGrid() {
-        for (int i = 0; i < M * M; i++) {
-            grid.put(i, new TreeSet<>());
-        }
-    }
-
-    private void generateParticles() {
-        Random rand = new Random();
-        for (int i = 0; i < N; i++) {
-            double x = rand.nextDouble() * L;
-            double y = rand.nextDouble() * L;
-            double vx = rand.nextDouble() - 0.5;
-            double vy = rand.nextDouble() - 0.5;
-            Particle p = new Particle(i, x, y, vx, vy, 0.25);
-            particles.add(p);
-            addToGrid(p);
-        }
-    }
-
-    private int getCellIndex(double x, double y) {
-        int row = (int) (y / (L / M));
-        int col = (int) (x / (L / M));
-        return row * M + col;
-    }
-
-    private void addToGrid(Particle p) {
-        int index = getCellIndex(p.getX(), p.getY());
-        grid.get(index).add(p);
+    public List<Particle> getParticles() {
+        return particles;
     }
 
     public Map<Integer, Set<Integer>> findNeighbors() {
@@ -98,4 +73,35 @@ class CellIndexMethod {
         }
         return possibleNeighbors;
     }
+
+    private void initializeGrid() {
+        for (int i = 0; i < M * M; i++) {
+            grid.put(i, new TreeSet<>());
+        }
+    }
+
+    private void generateParticles() {
+        Random rand = new Random();
+        for (int i = 0; i < N; i++) {
+            double x = rand.nextDouble() * L;
+            double y = rand.nextDouble() * L;
+            double vx = rand.nextDouble() - 0.5;
+            double vy = rand.nextDouble() - 0.5;
+            Particle p = new Particle(i, x, y, vx, vy, 5);
+            particles.add(p);
+            addToGrid(p);
+        }
+    }
+
+    private int getCellIndex(double x, double y) {
+        int row = (int) (y / (L / M));
+        int col = (int) (x / (L / M));
+        return row * M + col;
+    }
+
+    private void addToGrid(Particle p) {
+        int index = getCellIndex(p.getX(), p.getY());
+        grid.get(index).add(p);
+    }
+
 }
