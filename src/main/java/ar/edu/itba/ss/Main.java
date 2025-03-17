@@ -52,19 +52,18 @@ public class Main {
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
-        double Rc = L / M * 2;
-
+        double Rc = 10;
         CellIndexMethod cim = new CellIndexMethod(N, L, M, Rc, periodic, inputParticles);
         BruteForce bf = new BruteForce(Rc, inputParticles);
 
         long startTime = System.nanoTime();
         Map<Integer, Set<Integer>> neighbors = cim.findNeighbors();
         long endTime = System.nanoTime();
-//        System.out.println("Tiempo de ejecución CIM: " + (endTime - startTime) / 1e6 + " ms");
+        System.out.println("Tiempo de ejecución CIM: " + (endTime - startTime) / 1e6 + " ms");
 
         Map<Integer, Set<Integer>> neighborsBrutos = bf.findNeighborsBruteForce();
         long endBrutosTime = System.nanoTime();
-//        System.out.println("Tiempo de ejecución fuerza bruta: " + (endBrutosTime - endTime) / 1e6 + " ms");
+        System.out.println("Tiempo de ejecución fuerza bruta: " + (endBrutosTime - endTime) / 1e6 + " ms");
 
         try {
             writeNeighbors("output.txt", neighbors);
