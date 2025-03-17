@@ -31,10 +31,14 @@ class CellIndexMethod {
 
     public Map<Integer, Set<Integer>> findNeighbors() {
         Map<Integer, Set<Integer>> neighbors = new HashMap<>();
+
         for (Particle p : particles) {
             int cellIndex = getCellIndex(p.getX(), p.getY());
+
             neighbors.put(p.getId(), new TreeSet<>());
-            for (Particle neighbor : getPossibleNeighbors(cellIndex)) {
+            Set <Particle> possibleNeighbors = getPossibleNeighbors(cellIndex);
+
+            for (Particle neighbor : possibleNeighbors ) {
                 if (p.getId() != neighbor.getId() && p.distanceTo(neighbor) < Rc) {
                     neighbors.get(p.getId()).add(neighbor.getId());
                 }
@@ -43,6 +47,9 @@ class CellIndexMethod {
         return neighbors;
     }
     private Set<Particle> getPossibleNeighbors(int cellIndex) {
+        if(!grid.containsKey(cellIndex)) {
+            return new TreeSet<>();
+        }
         Set<Particle> possibleNeighbors = new TreeSet<>(grid.get(cellIndex));
         int row = cellIndex / M;
         int col = cellIndex % M;
@@ -78,7 +85,9 @@ class CellIndexMethod {
 
     private void addToGrid(Particle p) {
         int index = getCellIndex(p.getX(), p.getY());
-        grid.get(index).add(p);
+        if(grid.containsKey(index)) {
+            grid.get(index).add(p);
+        }
     }
 
     public Map<Integer, Set<Integer>> findNeighborsBruteForce() {
@@ -94,18 +103,18 @@ class CellIndexMethod {
         return neighbors;
     }
 
-    private void generateParticles() {
-        Random rand = new Random();
-        for (int i = 0; i < N; i++) {
-            double x = rand.nextDouble() * L;
-            double y = rand.nextDouble() * L;
-            double vx = rand.nextDouble() - 0.5;
-            double vy = rand.nextDouble() - 0.5;
-            Particle p = new Particle(i, x, y, vx, vy, 5,1.0);
-            particles.add(p);
-            addToGrid(p);
-        }
-    }
+//    private void generateParticles() {
+//        Random rand = new Random();
+//        for (int i = 0; i < N; i++) {
+//            double x = rand.nextDouble() * L;
+//            double y = rand.nextDouble() * L;
+//            double vx = rand.nextDouble() - 0.5;
+//            double vy = rand.nextDouble() - 0.5;
+//            Particle p = new Particle(i, x, y, vx, vy, 5,1.0);
+//            particles.add(p);
+//            addToGrid(p);
+//        }
+//    }
 
 
 }
