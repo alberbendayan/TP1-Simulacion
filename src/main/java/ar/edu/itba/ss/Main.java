@@ -8,15 +8,16 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        int N = 1000, M = 20, L = 100;
-        double Rc = (double) L /M;
+        int N = 5000, M = 5, L = 20;
+//        double Rc = (double) L / M * 3 / 4;
+        double Rc = 3;
         boolean periodic = true;
 
         List<Particle> particles = generateParticles(N, L);
         writeParticles("static.txt", "dynamic.txt", L, particles);
 
         CellIndexMethod cim = new CellIndexMethod(N, L, M, Rc, periodic, particles);
-        BruteForce bf = new BruteForce(Rc, particles);
+        BruteForce bf = new BruteForce(Rc, particles, L, periodic);
 
         long cimStartTime = System.nanoTime();
         Map<Integer, Set<Integer>> neighbors = cim.findNeighbors();
@@ -88,7 +89,7 @@ public class Main {
             double y = rand.nextDouble() * L;
             double vx = rand.nextDouble() - 0.5;
             double vy = rand.nextDouble() - 0.5;
-            particles.add(new Particle(i, x, y, vx, vy, 0.2,1.0));
+            particles.add(new Particle(i, x, y, vx, vy, 0.25, 1.0));
         }
 
         return particles;

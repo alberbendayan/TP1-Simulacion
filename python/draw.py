@@ -6,7 +6,7 @@ grid = (200, 200, 200)
 green = (0, 255, 0)
 red = (255, 0, 0)
 
-screen_size = (600, 600)
+screen_size = (800, 800)
 static_file_name = "static.txt"
 dynamic_file_name = "dynamic.txt"
 
@@ -64,8 +64,10 @@ def main():
     n, l, particles = read_input_files()
     neighbors = read_neighbors_file()
 
-    m = 20
-    rc = l/m
+    m = 5
+#     rc = l / m * 3 / 4
+    rc = 3
+    periodic = True
 
     width_ratio = screen_size[0] / l
     height_ratio = screen_size[1] / l
@@ -110,6 +112,12 @@ def main():
                     ),
                     int(rc * width_ratio),
                 )
+                if periodic:
+                    pg.draw.circle(surface, (0, 255, 0, 80), (int(particles[neighbor].x * width_ratio - l * width_ratio), int(particles[neighbor].y * height_ratio),), int(rc * width_ratio))
+                    pg.draw.circle(surface, (0, 255, 0, 80), (int(particles[neighbor].x * width_ratio + l * width_ratio), int(particles[neighbor].y * height_ratio),), int(rc * width_ratio))
+                    pg.draw.circle(surface, (0, 255, 0, 80), (int(particles[neighbor].x * width_ratio), int(particles[neighbor].y * height_ratio - l * height_ratio),), int(rc * width_ratio))
+                    pg.draw.circle(surface, (0, 255, 0, 80), (int(particles[neighbor].x * width_ratio), int(particles[neighbor].y * height_ratio + l * height_ratio),), int(rc * width_ratio))
+
                 screen.blit(surface, (0, 0))
 
             pg.draw.circle(
@@ -130,6 +138,7 @@ def main():
             if event.type == pg.KEYDOWN:
                 if event.key == pg.K_SPACE:
                     selected = rnd.randint(0, n - 1)
+                    print(neighbors[selected])
 
         pg.display.flip()
 

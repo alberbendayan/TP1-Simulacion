@@ -35,18 +35,20 @@ class CellIndexMethod {
         for (Particle p : particles) {
             int cellIndex = getCellIndex(p.getX(), p.getY());
 
-            neighbors.put(p.getId(), new TreeSet<>());
-            Set<Particle> possibleNeighbors = getPossibleNeighbors(cellIndex);
+            neighbors.put(p.getId(), new HashSet<>());
+            List<Particle> possibleNeighbors = getPossibleNeighbors(cellIndex);
 
             for (Particle neighbor : possibleNeighbors) {
                 if (p.getId() != neighbor.getId()) {
-                    double distance = p.distanceTo(neighbor);
+                    double distance;
                     if (periodic) {
                         double dx = Math.abs(p.getX() - neighbor.getX());
                         double dy = Math.abs(p.getY() - neighbor.getY());
                         dx = Math.min(dx, L - dx);
                         dy = Math.min(dy, L - dy);
-                        distance = Math.sqrt(dx * dx + dy * dy);
+                        distance = Math.sqrt(dx * dx + dy * dy) - neighbor.getR();
+                    } else {
+                        distance = p.distanceTo(neighbor);
                     }
                     if (distance < Rc) {
                         neighbors.get(p.getId()).add(neighbor.getId());
@@ -57,11 +59,12 @@ class CellIndexMethod {
         return neighbors;
     }
 
-    private Set<Particle> getPossibleNeighbors(int cellIndex) {
+    private List<Particle> getPossibleNeighbors(int cellIndex) {
         if (!grid.containsKey(cellIndex)) {
-            return new TreeSet<>();
+            return new ArrayList<>();
         }
-        Set<Particle> possibleNeighbors = new TreeSet<>(grid.get(cellIndex));
+
+        List<Particle> possibleNeighbors = new ArrayList<>(grid.get(cellIndex));
         int row = cellIndex / M;
         int col = cellIndex % M;
         int[] dx = {0, 1, 1, 0, -1, -1, -1, 0, 1};
@@ -84,7 +87,7 @@ class CellIndexMethod {
 
     private void initializeGrid() {
         for (int i = 0; i < M * M; i++) {
-            grid.put(i, new TreeSet<>());
+            grid.put(i, new HashSet<>());
         }
     }
 

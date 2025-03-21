@@ -33,7 +33,7 @@ class Particle implements Comparable<Particle> {
     public double distanceTo(Particle other) {
         double dx = this.x - other.x;
         double dy = this.y - other.y;
-        return Math.sqrt(dx * dx + dy * dy) - (this.r + other.r);
+        return Math.sqrt(dx * dx + dy * dy) - other.r;
     }
 
     @Override
