@@ -3,7 +3,8 @@ package ar.edu.itba.ss;
 import java.util.*;
 
 class BruteForce {
-    private final double  Rc;
+
+    private final double Rc;
     private final List<Particle> particles;
 
     public BruteForce(double Rc, List<Particle> particles) {
@@ -23,4 +24,5 @@ class BruteForce {
         }
         return neighbors;
     }
+
 }

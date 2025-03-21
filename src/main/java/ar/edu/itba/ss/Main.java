@@ -1,7 +1,5 @@
 package ar.edu.itba.ss;
 
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -10,60 +8,25 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) throws IOException {
-        int N = 0;
-        double L = 0;
-        int M = 6;
+        int N = 1000, M = 20, L = 100;
+        double Rc = (double) L /M;
         boolean periodic = true;
-        List<Particle> inputParticles = new ArrayList<>();
-        int id=0;
 
-        try {
-            File staticFile = new File("Static100.txt");
-            File dynamicFile = new File("Dynamic100.txt");
-            Scanner scannerStatic = new Scanner(staticFile);
-            Scanner scannerDynamic = new Scanner(dynamicFile);
+        List<Particle> particles = generateParticles(N, L);
+        writeParticles("static.txt", "dynamic.txt", L, particles);
 
-            if(scannerStatic.hasNextLine() && scannerDynamic.hasNextLine()) {
-                N = Integer.parseInt(scannerStatic.nextLine().trim());
-            }
+        CellIndexMethod cim = new CellIndexMethod(N, L, M, Rc, periodic, particles);
+        BruteForce bf = new BruteForce(Rc, particles);
 
-            if(scannerStatic.hasNextLine() && scannerDynamic.hasNextLine()) {
-                L = Integer.parseInt(scannerStatic.nextLine().trim());
-                scannerDynamic.nextLine();
-            }
-
-            while (scannerStatic.hasNextLine() && scannerDynamic.hasNextLine()) {
-                String dataStatic = scannerStatic.nextLine().trim();
-                String[] valuesStatic = dataStatic.split("\\s+");
-
-                String dataDynamic = scannerDynamic.nextLine().trim();
-                String[] valuesDynamic = dataDynamic.split("\\s+");
-                inputParticles.add(
-                        new Particle(id++,
-                                Double.parseDouble(valuesDynamic[0]),
-                                Double.parseDouble(valuesDynamic[1]),
-                                0.0,
-                                0.0,
-                                Double.parseDouble(valuesStatic[0]),
-                                Double.parseDouble(valuesStatic[1])));
-            }
-            scannerStatic.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
-        double Rc = 10;
-        CellIndexMethod cim = new CellIndexMethod(N, L, M, Rc, periodic, inputParticles);
-        BruteForce bf = new BruteForce(Rc, inputParticles);
-
-        long startTime = System.nanoTime();
+        long cimStartTime = System.nanoTime();
         Map<Integer, Set<Integer>> neighbors = cim.findNeighbors();
-        long endTime = System.nanoTime();
-        System.out.println("Tiempo de ejecución CIM: " + (endTime - startTime) / 1e6 + " ms");
+        long cimEndTime = System.nanoTime();
+        System.out.println("Tiempo de ejecución CIM: " + (cimEndTime - cimStartTime) / 1e6 + " ms");
 
+        long bruteStartTime = System.nanoTime();
         Map<Integer, Set<Integer>> neighborsBrutos = bf.findNeighborsBruteForce();
-        long endBrutosTime = System.nanoTime();
-        System.out.println("Tiempo de ejecución fuerza bruta: " + (endBrutosTime - endTime) / 1e6 + " ms");
+        long bruteEndTime = System.nanoTime();
+        System.out.println("Tiempo de ejecución fuerza bruta: " + (bruteEndTime - bruteStartTime) / 1e6 + " ms");
 
         try {
             writeNeighbors("output.txt", neighbors);
@@ -76,9 +39,24 @@ public class Main {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
+    public static void writeParticles(String staticFileName, String dynamicFileName, int L, List<Particle> particles) throws IOException {
+        List<String> staticLines = new ArrayList<>();
+        List<String> dynamicLines = new ArrayList<>();
+
+        staticLines.add(String.valueOf(particles.size()));
+        staticLines.add(String.valueOf(L));
+
+        dynamicLines.add("0");
+
+        for (Particle p : particles) {
+            staticLines.add(p.getR() + " " + p.getP());
+            dynamicLines.add(p.getX() + " " + p.getY() + " " + p.getVx() + " " + p.getVy());
+        }
+        Files.write(Paths.get(staticFileName), staticLines);
+        Files.write(Paths.get(dynamicFileName), dynamicLines);
+    }
 
     public static void writeNeighbors(String fileName, Map<Integer, Set<Integer>> neighbors) throws IOException {
         List<String> lines = new ArrayList<>();
@@ -101,5 +79,19 @@ public class Main {
         Files.write(Paths.get(fileName), lines);
     }
 
+    private static List<Particle> generateParticles(int N, double L) {
+        List<Particle> particles = new ArrayList<>();
+        Random rand = new Random();
+
+        for (int i = 0; i < N; i++) {
+            double x = rand.nextDouble() * L;
+            double y = rand.nextDouble() * L;
+            double vx = rand.nextDouble() - 0.5;
+            double vy = rand.nextDouble() - 0.5;
+            particles.add(new Particle(i, x, y, vx, vy, 0.2,1.0));
+        }
+
+        return particles;
+    }
 
 }

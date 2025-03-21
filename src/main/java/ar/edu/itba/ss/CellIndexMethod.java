@@ -3,6 +3,7 @@ package ar.edu.itba.ss;
 import java.util.*;
 
 class CellIndexMethod {
+
     private final int N, M;
     private final double L, Rc;
     private final List<Particle> particles;
@@ -19,10 +20,9 @@ class CellIndexMethod {
         this.grid = new HashMap<>();
 
         initializeGrid();
-        for(Particle p : particles) {
+        for (Particle p : particles) {
             addToGrid(p);
         }
-//        generateParticles();
     }
 
     public List<Particle> getParticles() {
@@ -36,18 +36,29 @@ class CellIndexMethod {
             int cellIndex = getCellIndex(p.getX(), p.getY());
 
             neighbors.put(p.getId(), new TreeSet<>());
-            Set <Particle> possibleNeighbors = getPossibleNeighbors(cellIndex);
+            Set<Particle> possibleNeighbors = getPossibleNeighbors(cellIndex);
 
-            for (Particle neighbor : possibleNeighbors ) {
-                if (p.getId() != neighbor.getId() && p.distanceTo(neighbor) < Rc) {
-                    neighbors.get(p.getId()).add(neighbor.getId());
+            for (Particle neighbor : possibleNeighbors) {
+                if (p.getId() != neighbor.getId()) {
+                    double distance = p.distanceTo(neighbor);
+                    if (periodic) {
+                        double dx = Math.abs(p.getX() - neighbor.getX());
+                        double dy = Math.abs(p.getY() - neighbor.getY());
+                        dx = Math.min(dx, L - dx);
+                        dy = Math.min(dy, L - dy);
+                        distance = Math.sqrt(dx * dx + dy * dy);
+                    }
+                    if (distance < Rc) {
+                        neighbors.get(p.getId()).add(neighbor.getId());
+                    }
                 }
             }
         }
         return neighbors;
     }
+
     private Set<Particle> getPossibleNeighbors(int cellIndex) {
-        if(!grid.containsKey(cellIndex)) {
+        if (!grid.containsKey(cellIndex)) {
             return new TreeSet<>();
         }
         Set<Particle> possibleNeighbors = new TreeSet<>(grid.get(cellIndex));
@@ -85,36 +96,9 @@ class CellIndexMethod {
 
     private void addToGrid(Particle p) {
         int index = getCellIndex(p.getX(), p.getY());
-        if(grid.containsKey(index)) {
+        if (grid.containsKey(index)) {
             grid.get(index).add(p);
         }
     }
-
-    public Map<Integer, Set<Integer>> findNeighborsBruteForce() {
-        Map<Integer, Set<Integer>> neighbors = new HashMap<>();
-        for (Particle p : particles) {
-            neighbors.put(p.getId(), new TreeSet<>());
-            for (Particle neighbor : particles) {
-                if (p.getId() != neighbor.getId() && p.distanceTo(neighbor) < Rc) {
-                    neighbors.get(p.getId()).add(neighbor.getId());
-                }
-            }
-        }
-        return neighbors;
-    }
-
-//    private void generateParticles() {
-//        Random rand = new Random();
-//        for (int i = 0; i < N; i++) {
-//            double x = rand.nextDouble() * L;
-//            double y = rand.nextDouble() * L;
-//            double vx = rand.nextDouble() - 0.5;
-//            double vy = rand.nextDouble() - 0.5;
-//            Particle p = new Particle(i, x, y, vx, vy, 5,1.0);
-//            particles.add(p);
-//            addToGrid(p);
-//        }
-//    }
-
 
 }
